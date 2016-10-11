@@ -1,0 +1,43 @@
+loadkeys la-latin1
+cfdisk /dev/sdX
+|-delete all partitions
+|-make the systems partition (/, /home, /root, etc.)
+|-make a swap partition with the same space as your installed ram (in this guide this gonna have the name of /dev/sdXW)
+|-make all non swap partitions bootables
+|-write changes
+|-close
+mkfs.ext4 /dev/sdXZ (repeat this if you make a diferent partition for every dir)
+mount /dev/sdX1 /mnt (the "/" partition, if you make more partitions mount the others inside of this)
+mkswap /dev/sdXW 
+swapon /dev/sdXW
+dhcpcd (if have a wired connection)
+wifi-menu (if have a wifi card and a wifi connection available) 
+pacstrap /mnt base base-devel
+arch-chroot /mnt
+passwd (make a new root password, use what you want)
+nano /etc/locale.gen
+|-uncomment your language configuration
+|-uncomment your language iso
+|-uncomment the deafault language and iso en-US.UTF-8 UTF-8 & en-US ISO-8859-1
+locale-gen
+ls /usr/share/zoneinfo
+ls /usr/share/zoneinfo/yourcountry
+ls /usr/share/zoneinfo/yourcountry/yourtimezone
+ln -s /usr/share/zoneinfo/yourcountry/yourtimezone /ect/localtime
+echo yourhostname > /etc/hostname
+pacman -S grub-bios
+grub-install /dev/sdX
+mkinitcpio -p linux
+grub-mkconfig -o /boot/grub/grub.cfg
+exit
+genfstab /mnt >> /mnt/etc/fstab
+umount /mnt
+reboot
+*remove the live media*
+*log in to root*
+useradd "newuser"
+passwd "newuser"
+dhcpcd
+pacman -Syu
+reboot
+*log in to root*
